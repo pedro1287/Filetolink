@@ -273,7 +273,7 @@ async def upload(path, host, username, password, repo, session, chat_id, user_id
     else:
         None
     with session as upload:
-            submission_page = upload.get(f"{ghost}/submission/$$$call$$$/wizard/2?submissionId={grepo}#step-2", headers=headers,verify=False)
+            submission_page = upload.get(f"{ghost}/submission/wizard/2?submissionId={grepo}#step-2", headers=headers,verify=False)
             token = submission_page.text.split('"csrfToken":"')[1].split('"')[0]
             # Realizar la carga del archivo
             files_data = {
@@ -299,7 +299,7 @@ async def delete_cloud(fileId, up):
     global gpass
     global grepo
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36"}
-    csrfToken = up.get(f"{ghost}/submission/$$$call$$$/wizard/2?submissionId={grepo}", headers=headers).text.split('csrfToken":"')[1].split('",')[0]
+    csrfToken = up.get(f"{ghost}/submission/wizard/2?submissionId={grepo}", headers=headers).text.split('csrfToken":"')[1].split('",')[0]
     t = up.post(f"{ghost}/api/v1/submissions/{grepo}/files/{fileId}?stageId=1",headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36","x-http-method-override": "DELETE","x-requested-with":"XMLHttpRequest","x-csrf-token":csrfToken})
 bot = TelegramClient(f'BitZerOT', api_id, api_hash).start(bot_token=bot_token)
 if not os.path.exists("./database"):
