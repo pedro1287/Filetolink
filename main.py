@@ -108,7 +108,7 @@ cc = 0
 cloud_space = cloud_space_gb*1024*1024*1024
 timed = time.time()
 async def upload_div(ruta_archivo,user_id, msg_id, tamano_parte_kb, cd):
-    tamano_parte_bytes = tamano_parte_kb * 100k * 1024m
+    tamano_parte_bytes = tamano_parte_kb * 100 * 1024
     lista_archivos_divididos = []
     tamano_archivo = os.path.getsize(cd+"/"+ruta_archivo)
     if tamano_archivo < tamano_parte_bytes:
