@@ -87,103 +87,116 @@ nube = []
 backup_file = "backup.json"
 account_file = "account.json"
 backup_interval = 3
+
 def save_backup():
     global nubes
     while True:
         with open(backup_file, 'w') as f:
             json.dump(nubes, f)
         time.sleep(backup_interval)
+
 def load_backup():
     with open(backup_file, 'r') as f:
         return json.load(f)
+
 if exists(backup_file):
     nubes = load_backup()
     print("BACKUP IMPORTADO")
 else:
     nubes = []
+
 def save_account():
-    global ghost
-    global guser
-    global gpass
-    global grepo
-    global bitzero
+    global ghost, guser, gpass, grepo, bitzero
     while True:
         with open(account_file, 'w') as fa:
             fa.write(f"{ghost} {guser} {gpass} {grepo} {bitzero}")
         time.sleep(backup_interval)
+
 def load_account():
-    global ghost
-    global guser
-    global gpass
-    global grepo
-    global bitzero
+    global ghost, guser, gpass, grepo, bitzero
     with open(account_file, 'r') as fa:
         sta = fa.read()
         ghost = sta.split(" ")[0]
         guser = sta.split(" ")[1]
         gpass = sta.split(" ")[2]
         grepo = sta.split(" ")[3]
+
 if exists(account_file):
     load_account()
     print("ACCOUNT IMPORTADO")
+
 backup_thread = threading.Thread(target=save_backup)
 backup_thread.daemon = True
 backup_thread.start()
+
 account_thread = threading.Thread(target=save_account)
 account_thread.daemon = True
 account_thread.start()
+
 procesos = []
 for u in users:
-    nubes.append({"user":u,"nube":[]})
+    nubes.append({"user": u, "nube": []})
+
 cc = 0
-cloud_space = cloud_space_gb*1024*1024*1024
+cloud_space = cloud_space_gb * 1024 * 1024 * 1024
 timed = time.time()
-async def upload_div(ruta_archivo,user_id, msg_id, tamano_parte_mb, cd):
-    tamano_parte_bytes = tamano_parte_mb * 1024 * 1024
+
+async def upload_div(ruta_archivo, user_id, msg_id, tamano_parte_mb, cd):
+    tamano_parte_bytes = parse_split_size(tamano_parte_mb)
     lista_archivos_divididos = []
-    tamano_archivo = os.path.getsize(cd+"/"+ruta_archivo)
-    if tamano_archivo < tamano_parte_bytes:
-        open(cd+"/temp/"+ruta_archivo,"wb").write(open(cd+"/"+ruta_archivo,"rb").read())
+    ruta_completa = os.path.join(cd, ruta_archivo)
+    tamano_archivo = os.path.getsize(ruta_completa)
+    
+    os.makedirs(os.path.join(cd, "temp"), exist_ok=True)
+
+    if tamano_archivo <= tamano_parte_bytes:
+        ruta_temp = os.path.join(cd, "temp", ruta_archivo)
+        with open(ruta_completa, "rb") as orig, open(ruta_temp, "wb") as dest:
+            dest.write(orig.read())
         lista_archivos_divididos.append(ruta_archivo)
     else:
-        with open(cd+"/"+ruta_archivo, 'rb') as archivo_original:
+        with open(ruta_completa, 'rb') as archivo_original:
             numero_parte = 1
             while True:
                 contenido_parte = archivo_original.read(tamano_parte_bytes)
                 if not contenido_parte:
                     break
                 nombre_parte = f"{ruta_archivo}_parte_{numero_parte}"
-                with open(cd+"/temp/"+nombre_parte, 'wb') as archivo_parte:
+                ruta_parte = os.path.join(cd, "temp", nombre_parte)
+                with open(ruta_parte, 'wb') as archivo_parte:
                     archivo_parte.write(contenido_parte)
                 lista_archivos_divididos.append(nombre_parte)
                 numero_parte += 1
     return lista_archivos_divididos
+
 async def ziper(file, user_id, msg_id, zips):
     file_size = os.path.getsize(file)
-    zipy = int(zips) * 1024 * 1024
+    zipy = parse_split_size(zips)
     filed = []
     if file_size > zipy:
-    	mult_file = zipfile.MultiFile(file,zipy)
-    	zip = zipfile.ZipFile(mult_file,  mode='w', compression=zipfile.ZIP_DEFLATED)
-    	zip.write(file)
-    	zip.close()
-    	mult_file.close()
-    	ti = 1
-    	te = True
-    	await bot.edit_message(user_id, msg_id, "<b>[✓]</b> #seven #local\n\n<code>Dividido</code>", parse_mode='HTML')
-    	while te:
-    		if exists(file+'.7z.{:03d}'.format(ti)):
-    			file_named = file+'.7z.{:03d}'.format(ti)
-    			ti += 1
-    			filed.append(file_named.split("/")[-1])
-    		else:
-    			te = False
+        mult_file = zipfile.MultiFile(file, zipy)
+        zip_obj = zipfile.ZipFile(mult_file, mode='w', compression=zipfile.ZIP_DEFLATED)
+        zip_obj.write(file)
+        zip_obj.close()
+        mult_file.close()
+        ti = 1
+        te = True
+        await bot.edit_message(user_id, msg_id, "<b>[✓]</b> #seven #local\n\n<code>Dividido</code>", parse_mode='HTML')
+        while te:
+            file_named = file + '.7z.{:03d}'.format(ti)
+            if exists(file_named):
+                ti += 1
+                filed.append(file_named.split("/")[-1])
+            else:
+                te = False
     else:
-    	filed = [file.split("/")[-1]]
+        filed = [file.split("/")[-1]]
     return filed
+
 def new_process(pid):
     global procesos
     procesos.append(pid)
+
 def wait_process(pid):
     global procesos
     if procesos[0] == pid:
@@ -192,17 +205,27 @@ def wait_process(pid):
         for w in range(len(procesos)):
             if procesos[w] == pid:
                 return w
+
 def fin_process(pid):
     global procesos
     procesos.remove(pid)
+
 def rm_process():
     global procesos
     procesos = []
+
 def o85ea6(eu6363):
-	  texto_desencriptado = base64.b64decode(eu6363.encode()).decode()
-	  return texto_desencriptado
+    return base64.b64decode(eu6363.encode()).decode()
+
 def gptd(value):
-	nonce = requests.get("https://chatgpt.ch/")
+    nonce = requests.get("https://chatgpt.ch/")nube = []
+backup_file = "backup.json"
+account_file = "account.json"
+backup_interval = 3
+def save_backup():
+    global nubes
+    while True:
+
 	wpnonce = nonce.text.split('data-nonce="')[1].split('"')[0]
 	a73664 = "aHR0cHM6Ly9jaGF0Z3B0LmNoL3dwLWFkbWluL2FkbWluLWFqYXgucGhw"
 	e657674 = "X3dwbm9uY2U="
