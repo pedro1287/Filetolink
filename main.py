@@ -3,19 +3,19 @@
 # BOT TELEGRAM BITZERO - ИСПРАВЛЕНА ЗАГРУЗКА НА EDICIONES.UO.EDU.CU
 # ==============================================================================
 
-users = [5692000351]
+users = [1552965219]
 # ПЕРВЫЙ ПОЛЬЗОВАТЕЛЬ — АДМИНИСТРАТОР
 cloud_space_gb = 10
 space_control = True
 space_local = 5
 cola_download = True
 bitzero = 1
-api_id = 9024532
-api_hash = '131b576240be107210aace99a5f5c5b0'
-bot_token = "6446287319:AAHCl-e2ShbqlOM90t2pwqI71LHvsjHntzI"
+api_id = 10181262
+api_hash = 'f52b5a057b73b9974eaa7403e04907f0'
+bot_token = "7792120327:AAG4GbQZSNL60E4i6QBOVlbj7k9W_F9JE5o"
 start_msg = ""
 key = ""
-ghost = "https://ediciones.uo.edu.cu"
+ghost = "https://ediciones.uo.edu.cu/index.php/e1"
 guser = "techdev"
 gpass = "@A1a2a3mo"
 grepo = 634
